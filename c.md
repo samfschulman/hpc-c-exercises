@@ -77,7 +77,23 @@ This may be overly cautious by me, but oh well.
  - **Sqrt**: I took the square root of the loop incrementor variable each time.
  - **Sin**: I took the sine of the loop incrementor variable each time.
 
+The results:
 
+![1771014593400](img/1771014593400.png)
 
-b. Are all arithmetic operations created equal?
+My iteration seems to have been necessary.
+No single one of these operations would have taken more than a microsecond.
+
+Integer multiplication, float multiplication, integer division, and square root are all in the same league.
+Square root is a very surprising inclusion in that list, as I would have imagined it to be a more costly iterative process.
+I'm very curious as to what's going on there, and if there is any hardware acceleration, or maybe precomputed values for low numbers which are more likely to be queried.
+
+Next on the list is sine, which is roughly 5-6 times slower than these, and then floating point division, which is more than twice as slow as sine.
+I knew floating point division was costly, but I would have expected the math library functions to beat it handily on speed.
+
+Out of sheer curiosity, I re-compiled this code with a different compiler (clang) to see if that made a difference.
+It didn't.
+The timing values are barely different at all:
+
+![1771014985562](img/1771014985562.png)
 
