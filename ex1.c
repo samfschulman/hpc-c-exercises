@@ -8,4 +8,6 @@ int main(){
     fgets(name, 100, stdin);
     name[strlen(name)-1] = 0;
     printf("Hello, %s!\n", name);
+
+    return 0;
 }

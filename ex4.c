@@ -58,4 +58,6 @@ int main(){
         b = sin(i);
     }
     endTime("sin");
+
+    return 0;
 }

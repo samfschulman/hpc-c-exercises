@@ -55,17 +55,17 @@ int main(){
 
     if (cols != vdim){
         puts("Error: matrix columns and vector dimension do not match. Multiplication impossible.\n\nExiting.");
+        return 1;
     }
-    else{
-        out = calloc(rows, sizeof(int));
-        gettimeofday(&start, NULL);
-        for (int i=0; i < rows; i++){
-            for (int j=0; j < cols; j++){
-                out[i] += matrix[i*cols+j]*vector[j];
-            }
+
+    out = calloc(rows, sizeof(int));
+    gettimeofday(&start, NULL);
+    for (int i=0; i < rows; i++){
+        for (int j=0; j < cols; j++){
+            out[i] += matrix[i*cols+j]*vector[j];
         }
-        gettimeofday(&stop, NULL);
     }
+    gettimeofday(&stop, NULL);
 
     // print result
     for (int i=0; i < rows; i++){
@@ -75,4 +75,6 @@ int main(){
 
     free(matrix);
     free(vector);
+
+    return 0;
 }

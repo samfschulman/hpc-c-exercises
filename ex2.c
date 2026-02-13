@@ -35,4 +35,6 @@ int main(){
     gettimeofday(&stop, NULL);
 
     printf("Completed in %ld microseconds.\n", stop.tv_sec*1000000 + stop.tv_usec - start.tv_sec*1000000 - start.tv_usec);
+
+    return 0;
 }
