@@ -36,7 +36,7 @@ C does have a `long double` type, but the standard library `sqrt` and `pow` func
 
 I assumed the text file needed to be loaded dynamically and couldn't just be statically programmed into the code, so I wrote a routine using `fgets` and `sscanf` to do that work.
 
-My matrix is a dynamically-allocated integer buffer, storing the matrix in one-dimensional memory in row-major order.
+My matrix is a dynamically-allocated buffer, storing the matrix in one-dimensional memory in row-major order.
 
 I had to figure out how to read lines from the file with a dynamic number of numbers per line.
 I landed on a strategy that involved `sscanf` to load one value at a time, advancing my string pointer to the start of the next value by using `strchr` to find the next space.
@@ -56,3 +56,8 @@ for (int i=0; i < rows; i++){
 
 I wanted to exclude the I/O time from the equation and time only the matrix multiplication part, since that feels like the real core of the task here.
 As a result, I decided to stick with my code-internal timing strategy from exercise 2.
+
+Provided below is a screenshot of my output:
+![1771010774605](img/1771010774605.png)
+
+Remarkably fast computation, though I wonder how it would scale with larger matrices.
