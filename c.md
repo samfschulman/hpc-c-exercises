@@ -37,6 +37,7 @@ C does have a `long double` type, but the standard library `sqrt` and `pow` func
 I assumed the text file needed to be loaded dynamically and couldn't just be statically programmed into the code, so I wrote a routine using `fgets` and `sscanf` to do that work.
 
 My matrix is a dynamically-allocated buffer, storing the matrix in one-dimensional memory in row-major order.
+I didn't want to use a 2-D array because my personal experience with those is that their actual layout in memory can be somewhat counterintuitive and compiler-dependent.
 
 I had to figure out how to read lines from the file with a dynamic number of numbers per line.
 I landed on a strategy that involved `sscanf` to load one value at a time, advancing my string pointer to the start of the next value by using `strchr` to find the next space.
@@ -97,9 +98,44 @@ The timing values are barely different at all:
 
 ![1771014985562](img/1771014985562.png)
 
+## Ex 5 - Row-major vs Column-major
+
+Implementing the column-major work here was simple, just copying the row-major work and swapping the loop headers.
+I decided to make `n` determined by a command line argument to make it easier to vary without recompiling.
+
+I put the dynamic-allocation version through its paces with escalating matrix sizes, until my system rebelled:
+
+![1771204634599](img/1771204634599.png)
+
+I tried to do the same with the static-allocation version but it quit on me far sooner:
+
+![1771204668369](img/1771204668369.png)
+
+My guess is that both of these eventual segfaults were due to overrunning the amount of virtual memory space available to the process.
+A 65536x65536 matrix of double-precision floats, which are presumably 64-bit (8-byte), requires 2^35 bytes of storage.
+That is 32 GiB, which is roughly the total amount of physical memory available on the machine I ran this particular exercise on, and we were trying to use that much in only a single segment of memory (the heap).
+For contrast, the previous step, which took over a minute to run but didn't crash, would only be 2^33 bytes, or 8 GiB.
+Now, virtual memory and physical memory are not the same thing and the former is very much intended to be able to exceed the latter, but only within reason.
+The arbiter of reason here is the operating system, and I don't know where the linux kernel draws the line, but apparently this was over it.
+
+The static version failed sooner because there was less available space on the stack than there was on the heap.
+A 512x512 matrix consumes only 2^21 bytes or 2 MiB.
+The step which crashed the program would have been 8 MiB.
+The stack just doesn't get the kind of space the heap does, because it's meant for normal function activation records, not colossal data structures.
+
+Examining the timing data, while it's pretty close at first between row- and column-major, they begin to diverge.
+In my final dynamic run, the column-major loop took around 20 times as long as the row-major loop.
+These data are rather noisy but the approximate ratio of divergence seems to be the same between static and dynamic allocation.
+
+The reason for this difference, of course, is caching.
+If the method of the loop and the method of memory storage don't match, then physical locality can't be exploited, and cache misses (even page misses with these massive matrices) abound.
+The pointer math in the dynamic example ensures that the storage of the matrix is row-major, while in the static case that was determined by the compiler and its interpretation of 2D-arrays.
+
 ## Ex 6 - String transformation function
 
 I interpreted the function "passed as an argument" here to mean "passed as a function argument" rather than a command-line argument, mostly because the latter doesn't really make any sense, and also because reading between the lines on this assignment I think the purpose is to make us use function pointers.
+
+![1771204787381](img/1771204787381.png)
 
 Within the scope of the problem as stated, there aren't a lot of alternative strategies to consider.
 The problem essentially specifies the format of main function calling transform-applying function which takes in a specific transformation function as an argument.
