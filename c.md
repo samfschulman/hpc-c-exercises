@@ -97,3 +97,15 @@ The timing values are barely different at all:
 
 ![1771014985562](img/1771014985562.png)
 
+## Ex 6 - String transformation function
+
+I interpreted the function "passed as an argument" here to mean "passed as a function argument" rather than a command-line argument, mostly because the latter doesn't really make any sense, and also because reading between the lines on this assignment I think the purpose is to make us use function pointers.
+
+Within the scope of the problem as stated, there aren't a lot of alternative strategies to consider.
+The problem essentially specifies the format of main function calling transform-applying function which takes in a specific transformation function as an argument.
+There's an argument to be made about dynamic v.s. static strings, perhaps, but following the dictum to use dynamic allocation and pointer math where possible/appropriate, there's not much choice to be made there.
+Other possible differences of approach are eliminated on a similar basis: using array syntax or pointer math to reference individual string characters, method of getting string from stdin, etc.
+
+As with any pointer-heavy implementation, proper tracking of memory is essential here to avoid a catastrophe.
+The dynamic string must be lengthened at the appropriate time, which entails allocating new memory, ensuring the old memory has been deallocated if the new space has moved, tracking the new size, it must be freed upon exit, etc.
+Fortunately, `realloc` handles some of that for us.
